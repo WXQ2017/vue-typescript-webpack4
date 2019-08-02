@@ -61,15 +61,6 @@ module.exports = {
           }
         ]
       },
-      // {
-      //   test: /\.ts$/,
-      //   // exclude: "/node_modules",
-      //   loader: "awesome-typescript-loader",
-      //   options: {
-      //     useBabel: true,
-      //     useCache: true
-      //   }
-      // },
       {
         test: /\.vue$/,
         use: [
@@ -78,25 +69,28 @@ module.exports = {
           }
         ]
       },
+      // {
+      //   test: /\.css$/,
+      //   use: [
+      //     MiniCssExtractPlugin.loader,
+      //     {
+      //       loader: "css-loader",
+      //       options: {
+      //         minimize: process.env.NODE_ENV === "production"
+      //       }
+      //     }
+      //   ]
+      // },
       {
-        test: /\.css$/,
+        test: /\.scss$/,
         use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: "css-loader",
-            options: {
-              minimize: process.env.NODE_ENV === "production"
-            }
-          }
+          process.env.NODE_ENV !== "production"
+            ? "vue-style-loader"
+            : MiniCssExtractPlugin.loader,
+          "css-loader",
+          "sass-loader"
         ]
       },
-      // {
-      //   test: /\.less$/,
-      //   use: MiniCssExtractPlugin.extract({
-      //     fallback: "style-loader",
-      //     use: ["css-loader", "less-loader"]
-      //   })
-      // },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?/,
         use: [
