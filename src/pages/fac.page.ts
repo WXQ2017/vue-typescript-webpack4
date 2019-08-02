@@ -7,3 +7,12 @@ export function HomePagePreloading(): Promise<any> {
     });
   });
 }
+
+/**
+ * 错误处理
+ *
+ * @param {*} err
+ */
+function dealWithError(err: any, page: string) {
+  console.log(page, err);
+}
