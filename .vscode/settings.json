@@ -1,0 +1,9 @@
+{
+  "git.ignoreLimitWarning": true,
+  "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
+  "files.autoSave": "onFocusChange",
+  "prettier.trailingComma": "all",
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true
+}

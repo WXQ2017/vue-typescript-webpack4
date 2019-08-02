@@ -15,29 +15,29 @@ const RELEASE_ENV = process.env.RELEASE_ENV || "DEV";
 const NODE_ENV = {
   DEV: "development",
   TEST: "production",
-  MASTER: "production"
+  MASTER: "production",
 }[RELEASE_ENV];
 process.env.NODE_ENV = NODE_ENV;
 console.log(NODE_ENV);
 
 const extractLESS = new MiniCssExtractPlugin({
   filename: "styles/[name]-one-[contenthash].css",
-  allChunks: true
+  allChunks: true,
 });
 const extractSCSS = new MiniCssExtractPlugin(
-  "styles/[name]-two-[contenthash].css"
+  "styles/[name]-two-[contenthash].css",
 );
 
 const publicPath = "/";
 module.exports = {
   // mode: process.env.NODE_ENV,
   entry: {
-    app: ["./src/app.ts"]
+    app: ["./src/app.ts"],
   },
   output: {
     filename: "scripts/[name]_[hash].js",
     path: path.resolve(__dirname, "dist"),
-    publicPath: publicPath
+    publicPath: publicPath,
   },
   module: {
     rules: [
@@ -56,18 +56,18 @@ module.exports = {
             loader: "awesome-typescript-loader",
             options: {
               useBabel: true,
-              useCache: true
-            }
-          }
-        ]
+              useCache: true,
+            },
+          },
+        ],
       },
       {
         test: /\.vue$/,
         use: [
           {
-            loader: "vue-loader"
-          }
-        ]
+            loader: "vue-loader",
+          },
+        ],
       },
       // {
       //   test: /\.css$/,
@@ -88,8 +88,8 @@ module.exports = {
             ? "vue-style-loader"
             : MiniCssExtractPlugin.loader,
           "css-loader",
-          "sass-loader"
-        ]
+          "sass-loader",
+        ],
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?/,
@@ -98,27 +98,37 @@ module.exports = {
             loader: "url-loader",
             query: {
               limit: 10000,
-              name: "img/[name].[hash:7].[ext]"
-            }
-          }
-        ]
+              name: "img/[name].[hash:7].[ext]",
+            },
+          },
+        ],
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         loader: "url-loader",
         query: {
           limit: 10000,
-          name: "fonts/[name].[hash:7].[ext]"
-        }
-      }
-    ]
+          name: "fonts/[name].[hash:7].[ext]",
+        },
+      },
+    ],
   },
   devtool: "inline-source-map",
   devServer: {
+    // redirect vue-router history
+    historyApiFallback: {
+      rewrites: [
+        {
+          from: /^\/$/,
+          to: "/index.html",
+        },
+      ],
+      disableDotRule: true,
+    },
     host: "127.0.0.1",
     hot: true,
     port: 8088,
-    publicPath: publicPath
+    publicPath: publicPath,
   },
   optimization: {
     minimize: process.env.NODE_ENV === "production" ? true : false, //是否进行代码压缩
@@ -130,8 +140,8 @@ module.exports = {
         sourceMap: true, // Must be set to true if using source-maps in production
         terserOptions: {
           // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
-        }
-      })
+        },
+      }),
     ],
     splitChunks: {
       // initial、async、 all。
@@ -145,19 +155,19 @@ module.exports = {
         commons: {
           name: "commons",
           chunks: "initial",
-          minChunks: 2
-        }
-      }
-    }
+          minChunks: 2,
+        },
+      },
+    },
   },
   resolve: {
     // 配置模块如何解析
-    extensions: [".vue", ".js", ".ts", ".json"]
+    extensions: [".vue", ".js", ".ts", ".json"],
   },
   plugins: [
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
-      "process.env": process.env.NODE_ENV
+      "process.env": process.env.NODE_ENV,
     }),
     // new webpack.optimize.UglifyJsPlugin({
     //   compress: {
@@ -182,11 +192,11 @@ module.exports = {
         //压缩配置
         removeComments: true, //删除html中的注释代码
         collapseWhitespace: true, //删除html中的空白符
-        removeAttributeQuotes: true //删除html元素中属性的引号
+        removeAttributeQuotes: true, //删除html元素中属性的引号
       },
       // chunksSortMode: "dependency" //按dependency的顺序引入
-      chunksSortMode: "none" //如果使用webpack4将该配置项设置为'none'
-    })
+      chunksSortMode: "none", //如果使用webpack4将该配置项设置为'none'
+    }),
     // 分离公共js到vendor中
     // new webpack.optimize.CommonsChunkPlugin({
     //   name: "vendor", //文件名
@@ -212,5 +222,5 @@ module.exports = {
     //     ignore: [".*"] //忽视.*文件
     //   }
     // ])
-  ]
+  ],
 };

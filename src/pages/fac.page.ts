@@ -1,4 +1,5 @@
 // WXQ-BUILD-PAGE # NOT DELETE
+// Home PAGE BEGIN
 export function HomePagePreloading(): Promise<any> {
   return new Promise(resolve => {
     require.ensure([], require => {
@@ -7,6 +8,7 @@ export function HomePagePreloading(): Promise<any> {
     });
   });
 }
+// Home PAGE END
 
 /**
  * 错误处理
