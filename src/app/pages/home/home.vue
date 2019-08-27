@@ -2,7 +2,7 @@
   <div class="temp">
     <h1>欢迎使用wxq-cli</h1>
     <img
-      src="../../assets/render.gif"
+      src="../../../assets/render.gif"
       alt=""
       srcset=""
     >

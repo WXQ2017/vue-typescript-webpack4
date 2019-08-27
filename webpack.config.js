@@ -27,12 +27,15 @@ const extractLESS = new MiniCssExtractPlugin({
 const extractSCSS = new MiniCssExtractPlugin(
   "styles/[name]-two-[contenthash].css",
 );
+const isMaster = process.env.NODE_ENV === "production";
+const isTest = process.env.NODE_ENV === "production";
+const isDev = process.env.NODE_ENV === "development";
 
 const publicPath = "/";
 module.exports = {
   // mode: process.env.NODE_ENV,
   entry: {
-    app: ["./src/app.ts"],
+    app: ["./src/app/app.ts"],
   },
   output: {
     filename: "scripts/[name]_[hash].js",
@@ -50,7 +53,7 @@ module.exports = {
       //   }
       // },
       {
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         use: [
           {
             loader: "awesome-typescript-loader",
@@ -131,7 +134,7 @@ module.exports = {
     publicPath: publicPath,
   },
   optimization: {
-    minimize: process.env.NODE_ENV === "production" ? true : false, //是否进行代码压缩
+    minimize: isMaster ? true : false, //是否进行代码压缩
     minimizer: [
       new TerserPlugin({
         cache: true,
@@ -186,7 +189,7 @@ module.exports = {
     new OptimizeCSSPlugin(),
     new HtmlWebpackPlugin({
       filename: "index.html", // 生成的html文件名
-      template: "./src/index.html", // 依据的模板
+      template: "./src/app/index.html", // 依据的模板
       inject: true, //注入的js文件将会被放在body标签中,当值为'head'时，将被放在head标签中
       minify: {
         //压缩配置
