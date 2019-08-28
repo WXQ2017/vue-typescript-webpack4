@@ -11,6 +11,11 @@ const routes: RouteConfig[] = [
     path: "/",
   },
   {
+    component: PageLoading.TestPagePreloading,
+    name: "Test",
+    path: "/test",
+  },
+  {
     path: "*",
     redirect: "/",
   },

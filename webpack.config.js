@@ -52,12 +52,18 @@ module.exports = {
       //     loader: "babel-loader"
       //   }
       // },
+      // {
+      //   test: /\.jsx?$/,
+      //   loader: "babel-loader",
+      // },
       {
         test: /\.tsx?$/,
         use: [
+          "babel-loader",
           {
             loader: "awesome-typescript-loader",
             options: {
+              appendTsSuffixTo: [/\.vue$/],
               useBabel: true,
               useCache: true,
             },
@@ -165,7 +171,7 @@ module.exports = {
   },
   resolve: {
     // 配置模块如何解析
-    extensions: [".vue", ".js", ".ts", ".json"],
+    extensions: [".vue", ".js", ".ts", "tsx", ".json"],
   },
   plugins: [
     new VueLoaderPlugin(),

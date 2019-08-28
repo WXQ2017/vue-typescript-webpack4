@@ -1,21 +1,43 @@
-import Vue from "vue";
+import Vue, { CreateElement } from "vue";
 import Component, { mixins } from "vue-class-component";
+import { Prop } from "vue-property-decorator";
+
 import getScrollBarWidth from "../../../common/utils/scroll-width";
 import Common from "../../../common/utils/utils";
 import BaseComp from "../BaseComp";
+import Bar from "./bar.vue";
 
 interface IScrollBarComp {
   title: string;
 }
 
 @Component({
-  components: {},
+  components: { Bar },
 })
 export default class ScrollBarComp extends mixins(BaseComp)
   implements IScrollBarComp {
   title: string = "scroll-bar";
-  wrapStyle: any = {};
-  render(h: Document) {
+  moveX: number = 0;
+  moveY: number = 0;
+  sizeWidth: string = "0";
+  sizeHeight: string = "0";
+  @Prop({ default: "div" })
+  tag: string;
+  @Prop({ default: {} })
+  viewClass: any;
+  @Prop({ default: {} })
+  viewStyle: any;
+  @Prop({ default: {} })
+  wrapStyle: any;
+  @Prop({ default: {} })
+  wrapClass: any;
+  @Prop()
+  native: boolean;
+
+  get wrap() {
+    return this.$refs.wrap as HTMLBaseElement;
+  }
+  render(h: CreateElement) {
     const gutter = getScrollBarWidth();
     let style = this.wrapStyle;
     if (gutter) {
@@ -32,5 +54,44 @@ export default class ScrollBarComp extends mixins(BaseComp)
         style = gutterStyle;
       }
     }
+    const view = h(
+      this.tag,
+      {
+        class: ["scrollbar-view", this.viewClass],
+        ref: "resize",
+        style: this.viewStyle,
+      },
+      this.$slots.default,
+    );
+    const wrap = (
+      <div
+        ref="wrap"
+        style={style}
+        onScroll={this.handleScroll}
+        class={[
+          this.wrapClass,
+          "scrollbar-wrap",
+          gutter ? "" : "scrollbar_wrap--hidden-default",
+        ]}
+      >
+        {[view]}
+      </div>
+    );
+    let nodes;
+    if (!this.native) {
+      nodes = [
+        wrap,
+        <Bar move={this.moveX} size={this.sizeWidth}></Bar>,
+        // <Bar vertical move={this.moveY} size={this.sizeHeight}></Bar>,
+      ];
+    } else {
+    }
+
+    return h("div", { class: "scrollbar" }, nodes);
+  }
+  handleScroll() {
+    const wrap = this.wrap;
+    this.moveY = (wrap.scrollTop * 100) / wrap.clientHeight;
+    this.moveX = (wrap.scrollLeft * 100) / wrap.clientWidth;
   }
 }

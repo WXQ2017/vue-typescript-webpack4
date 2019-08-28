@@ -9,6 +9,16 @@ export function HomePagePreloading(): Promise<any> {
   });
 }
 // Home PAGE END
+// Test PAGE BEGIN
+export function TestPagePreloading(): Promise<any> {
+  return new Promise(resolve => {
+    require.ensure([], require => {
+      const Test = require("./test/test.vue").default;
+      resolve(Test);
+    });
+  });
+}
+// Test PAGE END
 
 /**
  * 错误处理
