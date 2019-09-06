@@ -31,9 +31,9 @@ const BAR_MAP = {
 export default class Bar extends mixins(BaseComp) {
   @Prop()
   vertical: boolean;
-  @Prop()
+  @Prop({ default: 0 })
   move: number;
-  @Prop()
+  @Prop({ default: "" })
   size: string;
   get bar() {
     return BAR_MAP[this.vertical ? "vertical" : "horizontal"];
@@ -56,5 +56,7 @@ export default class Bar extends mixins(BaseComp) {
   }
   clickTrackHandler() {}
   clickThumbHandler() {}
-  renderThumbStyle<T>(obj: T) {}
+  renderThumbStyle<T>(obj: T) {
+    return [];
+  }
 }

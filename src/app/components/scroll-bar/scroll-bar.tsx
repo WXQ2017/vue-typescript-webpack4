@@ -13,6 +13,7 @@ interface IScrollBarComp {
 
 @Component({
   components: { Bar },
+  name: "scrollBar",
 })
 export default class ScrollBarComp extends mixins(BaseComp)
   implements IScrollBarComp {
@@ -23,13 +24,29 @@ export default class ScrollBarComp extends mixins(BaseComp)
   sizeHeight: string = "0";
   @Prop({ default: "div" })
   tag: string;
-  @Prop({ default: {} })
+  @Prop({
+    default: () => {
+      return [];
+    },
+  })
   viewClass: any;
-  @Prop({ default: {} })
+  @Prop({
+    default: () => {
+      return [];
+    },
+  })
   viewStyle: any;
-  @Prop({ default: {} })
+  @Prop({
+    default: () => {
+      return [];
+    },
+  })
   wrapStyle: any;
-  @Prop({ default: {} })
+  @Prop({
+    default: () => {
+      return [];
+    },
+  })
   wrapClass: any;
   @Prop()
   native: boolean;
@@ -81,10 +98,19 @@ export default class ScrollBarComp extends mixins(BaseComp)
     if (!this.native) {
       nodes = [
         wrap,
-        <Bar move={this.moveX} size={this.sizeWidth}></Bar>,
-        // <Bar vertical move={this.moveY} size={this.sizeHeight}></Bar>,
+        <bar move={this.moveX} size={this.sizeWidth}></bar>,
+        <bar vertical move={this.moveY} size={this.sizeHeight}></bar>,
       ];
     } else {
+      nodes = [
+        <div
+          ref="wrap"
+          class={[this.wrapClass, "el-scrollbar__wrap"]}
+          style={style}
+        >
+          {[view]}
+        </div>,
+      ];
     }
 
     return h("div", { class: "scrollbar" }, nodes);

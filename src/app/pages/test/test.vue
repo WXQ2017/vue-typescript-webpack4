@@ -1,6 +1,23 @@
 <template>
   <div class="temp">
-    111
+    <scroll-bar>
+      <div class="test-height">
+
+        <p>11111111</p>
+        <p>11111111</p>
+        <p>11111111</p>
+        <p>11111111</p>
+        <p>11111111</p>
+        <p>11111111</p>
+        <p>11111111</p>
+        <p>11111111</p>
+        11111111
+        11111111
+        11111111
+        11111111
+        11111111
+      </div>
+    </scroll-bar>
   </div>
 </template>
 <script src="./test.ts" lang="ts"></script>
@@ -15,6 +32,10 @@
   img {
     width: 400px;
   }
+}
+
+.test-height {
+  height: 30px;
 }
 </style>
 

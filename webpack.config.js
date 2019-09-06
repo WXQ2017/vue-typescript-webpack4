@@ -32,10 +32,11 @@ const isTest = process.env.NODE_ENV === "production";
 const isDev = process.env.NODE_ENV === "development";
 
 const publicPath = "/";
+// global PUBLIC_PATH = "/"
 module.exports = {
   // mode: process.env.NODE_ENV,
   entry: {
-    app: ["./src/app/app.ts"],
+    app: ["./src/app/index.bootstrap.ts"],
   },
   output: {
     filename: "scripts/[name]_[hash].js",
@@ -122,7 +123,7 @@ module.exports = {
       },
     ],
   },
-  devtool: "inline-source-map",
+  devtool: isMaster ? "" : "inline-source-map",
   devServer: {
     // redirect vue-router history
     historyApiFallback: {
@@ -138,20 +139,22 @@ module.exports = {
     hot: true,
     port: 8088,
     publicPath: publicPath,
+    disableHostCheck: true, // Invalid Host header 服务器域名访问出现的问题
   },
   optimization: {
-    minimize: isMaster ? true : false, //是否进行代码压缩
-    minimizer: [
-      new TerserPlugin({
-        cache: true,
-        parallel: true,
+    // 已废弃
+    // minimize: isMaster ? true : false, //是否进行代码压缩
+    // minimizer: [
+    //   new TerserPlugin({
+    //     cache: true,
+    //     parallel: true,
 
-        sourceMap: true, // Must be set to true if using source-maps in production
-        terserOptions: {
-          // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
-        },
-      }),
-    ],
+    //     sourceMap: true, // Must be set to true if using source-maps in production
+    //     terserOptions: {
+    //       // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
+    //     },
+    //   }),
+    // ],
     splitChunks: {
       // initial、async、 all。
       // 默认为async，表示只会提取异步加载模块的公共代码，initial表示只会提取初始入口模块的公共代码，all表示同时提取前两者的代码
@@ -171,12 +174,13 @@ module.exports = {
   },
   resolve: {
     // 配置模块如何解析
-    extensions: [".vue", ".js", ".ts", "tsx", ".json"],
+    extensions: [".vue", ".ts", ".tsx", ".js", ".jsx", ".json"],
   },
   plugins: [
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
       "process.env": process.env.NODE_ENV,
+      PUBLIC_PATH: JSON.stringify(publicPath),
     }),
     // new webpack.optimize.UglifyJsPlugin({
     //   compress: {

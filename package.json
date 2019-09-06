@@ -16,6 +16,9 @@
     "@babel/core": "^7.5.5",
     "@babel/plugin-transform-runtime": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
+    "@types/axios-mock-adapter": "^1.10.0",
+    "@types/qs": "^6.5.3",
+    "@types/reflect-metadata": "^0.1.0",
     "@types/webpack-env": "^1.13.9",
     "awesome-typescript-loader": "^5.2.1",
     "babel-core": "^6.26.3",
@@ -45,6 +48,7 @@
     "webpack-dev-server": "^3.3.1"
   },
   "dependencies": {
+    "axios": "^0.19.0",
     "babel-polyfill": "^6.26.0",
     "vue": "^2.6.10",
     "vue-class-component": "^7.1.0",
