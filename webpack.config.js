@@ -9,6 +9,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 
+const fs = require("fs");
+require(path.resolve(__dirname, "config/config.js"));
+const SITE_INFO = config_env;
+
 // 发布环境
 const RELEASE_ENV = process.env.RELEASE_ENV || "DEV";
 // 打包环境
@@ -139,7 +143,7 @@ module.exports = {
     hot: true,
     port: 8088,
     publicPath: publicPath,
-    disableHostCheck: true, // Invalid Host header 服务器域名访问出现的问题
+    disableHostCheck: true,
   },
   optimization: {
     // 已废弃
@@ -180,6 +184,7 @@ module.exports = {
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
       "process.env": process.env.NODE_ENV,
+      SITE_INFO: JSON.stringify(SITE_INFO),
       PUBLIC_PATH: JSON.stringify(publicPath),
     }),
     // new webpack.optimize.UglifyJsPlugin({

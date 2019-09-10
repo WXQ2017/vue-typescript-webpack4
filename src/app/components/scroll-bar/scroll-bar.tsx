@@ -29,22 +29,22 @@ export default class ScrollBarComp extends mixins(BaseComp)
       return [];
     },
   })
-  viewClass: any;
+  viewClass: any[];
   @Prop({
     default: () => {
       return [];
     },
   })
-  viewStyle: any;
+  viewStyle: any[];
   @Prop({
     default: () => {
-      return [];
+      return {};
     },
   })
   wrapStyle: any;
   @Prop({
     default: () => {
-      return [];
+      return {};
     },
   })
   wrapClass: any;

@@ -24,6 +24,7 @@
 <style lang="scss" scoped>
 .temp {
   width: 666px;
+  min-height: 100px;
   margin: 60px auto;
   text-align: center;
   h1 {
