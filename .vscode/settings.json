@@ -3,6 +3,8 @@
   "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
   "files.autoSave": "onFocusChange",
   "prettier.trailingComma": "all",
+  "prettier.semi": true,
+  "prettier.singleQuote": false,
   "editor.detectIndentation": false,
   "editor.tabSize": 2,
   "editor.formatOnSave": true

@@ -2,6 +2,10 @@ import Vue, { CreateElement } from "vue";
 import Component, { mixins } from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
+import {
+  addResizeListener,
+  removeResizeListener,
+} from "../../../common/utils/resize-event";
 import getScrollBarWidth from "../../../common/utils/scroll-width";
 import Common from "../../../common/utils/utils";
 import BaseComp from "../BaseComp";
@@ -15,8 +19,7 @@ interface IScrollBarComp {
   components: { Bar },
   name: "scrollBar",
 })
-export default class ScrollBarComp extends mixins(BaseComp)
-  implements IScrollBarComp {
+export default class ScrollBarComp extends Vue implements IScrollBarComp {
   title: string = "scroll-bar";
   moveX: number = 0;
   moveY: number = 0;
@@ -48,9 +51,10 @@ export default class ScrollBarComp extends mixins(BaseComp)
     },
   })
   wrapClass: any;
-  @Prop()
+  @Prop({ default: false })
   native: boolean;
-
+  @Prop({ default: false })
+  noresize: boolean; // 如果 container 尺寸不会发生变化，最好设置它可以优化性能
   get wrap() {
     return this.$refs.wrap as HTMLBaseElement;
   }
@@ -105,7 +109,7 @@ export default class ScrollBarComp extends mixins(BaseComp)
       nodes = [
         <div
           ref="wrap"
-          class={[this.wrapClass, "el-scrollbar__wrap"]}
+          class={[this.wrapClass, "scrollbar__wrap"]}
           style={style}
         >
           {[view]}
@@ -119,5 +123,37 @@ export default class ScrollBarComp extends mixins(BaseComp)
     const wrap = this.wrap;
     this.moveY = (wrap.scrollTop * 100) / wrap.clientHeight;
     this.moveX = (wrap.scrollLeft * 100) / wrap.clientWidth;
+  }
+  update() {
+    let heightPercentage;
+    let widthPercentage;
+    const wrap = this.wrap;
+    if (!wrap) {
+      return;
+    }
+
+    heightPercentage = (wrap.clientHeight * 100) / wrap.scrollHeight;
+    widthPercentage = (wrap.clientWidth * 100) / wrap.scrollWidth;
+
+    this.sizeHeight = heightPercentage < 100 ? heightPercentage + "%" : "";
+    this.sizeWidth = widthPercentage < 100 ? widthPercentage + "%" : "";
+  }
+  mounted() {
+    if (this.native) {
+      return;
+    }
+    this.$nextTick(this.update);
+    if (!this.noresize) {
+      addResizeListener(this.$refs.resize, this.update);
+    }
+  }
+
+  beforeDestroy() {
+    if (this.native) {
+      return;
+    }
+    if (!this.noresize) {
+      removeResizeListener(this.$refs.resize, this.update);
+    }
   }
 }

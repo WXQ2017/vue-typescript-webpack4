@@ -1,8 +1,9 @@
 <template>
   <div class="temp">
-    <scroll-bar>
-      <div class="test-height">
+    111
 
+    <scroll-bar :viewClass="['aa']">
+      <div class="test-height">
         <p>11111111</p>
         <p>11111111</p>
         <p>11111111</p>
@@ -11,11 +12,6 @@
         <p>11111111</p>
         <p>11111111</p>
         <p>11111111</p>
-        11111111
-        11111111
-        11111111
-        11111111
-        11111111
       </div>
     </scroll-bar>
   </div>
@@ -36,7 +32,6 @@
 }
 
 .test-height {
-  height: 30px;
 }
 </style>
 

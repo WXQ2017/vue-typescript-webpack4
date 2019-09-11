@@ -37,4 +37,38 @@ export default class Common {
     }
     return "";
   }
+
+  static on(
+    element: Document,
+    event: string,
+    handler: EventListenerOrEventListenerObject,
+  ) {
+    if (document.addEventListener) {
+      if (element && event && handler) {
+        // (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        element.addEventListener(event, handler, false);
+      }
+    } else {
+      if (element && event && handler) {
+        (element as any).attachEvent("on" + event, handler);
+      }
+    }
+  }
+
+  /* istanbul ignore next */
+  static off(
+    element: Document,
+    event: string,
+    handler: EventListenerOrEventListenerObject,
+  ) {
+    if (document.removeEventListener) {
+      if (element && event) {
+        element.removeEventListener(event, handler, false);
+      }
+    } else {
+      if (element && event) {
+        (element as any).detachEvent("on" + event, handler);
+      }
+    }
+  }
 }
