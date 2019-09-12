@@ -57,7 +57,7 @@ export default class Bar extends mixins(BaseComp) {
     return BAR_MAP[this.vertical ? "vertical" : "horizontal"];
   }
   get wrap() {
-    return this.$parent.wrap;
+    return (this.$parent as any).wrap;
   }
   render(h: CreateElement) {
     const { size, move, bar } = this;
