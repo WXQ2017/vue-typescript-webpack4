@@ -78,7 +78,7 @@ export default class ScrollBarComp extends Vue implements IScrollBarComp {
     const view = h(
       this.tag,
       {
-        class: ["scrollbar-view", this.viewClass],
+        class: ["wxq-scrollbar-view", this.viewClass],
         ref: "resize",
         style: this.viewStyle,
       },
@@ -91,8 +91,8 @@ export default class ScrollBarComp extends Vue implements IScrollBarComp {
         onScroll={this.handleScroll}
         class={[
           this.wrapClass,
-          "scrollbar-wrap",
-          gutter ? "" : "scrollbar_wrap--hidden-default",
+          "wxq-scrollbar__wrap",
+          gutter ? "" : "wxq-scrollbar_wrap--hidden-default",
         ]}
       >
         {[view]}
@@ -109,7 +109,7 @@ export default class ScrollBarComp extends Vue implements IScrollBarComp {
       nodes = [
         <div
           ref="wrap"
-          class={[this.wrapClass, "scrollbar__wrap"]}
+          class={[this.wrapClass, "wxq-scrollbar__wrap"]}
           style={style}
         >
           {[view]}
@@ -117,7 +117,7 @@ export default class ScrollBarComp extends Vue implements IScrollBarComp {
       ];
     }
 
-    return h("div", { class: "scrollbar" }, nodes);
+    return h("div", { class: "wxq-scrollbar" }, nodes);
   }
   handleScroll() {
     const wrap = this.wrap;

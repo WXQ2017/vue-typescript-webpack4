@@ -1,7 +1,6 @@
 <template>
   <div class="temp">
     111
-
     <scroll-bar :viewClass="['aa']">
       <div class="test-height">
         <p>11111111</p>
@@ -20,7 +19,7 @@
 <style lang="scss" scoped>
 .temp {
   width: 666px;
-  min-height: 100px;
+  height: 200px;
   margin: 60px auto;
   text-align: center;
   h1 {

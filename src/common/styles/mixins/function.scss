@@ -4,13 +4,14 @@
  -------------------------- */
 @function selectorToString($selector) {
   $selector: inspect($selector);
+  // str-slice(string,start-at, [$end-at]) : Extracts a substring from $string.
   $selector: str-slice($selector, 2, -2);
   @return $selector;
 }
 
 @function containsModifier($selector) {
   $selector: selectorToString($selector);
-
+  // str-index(string,substring) : Returns the index of the first occurrence of $substring in $string.
   @if str-index($selector, $modifier-separator) {
     @return true;
   } @else {

@@ -63,12 +63,12 @@ export default class Bar extends mixins(BaseComp) {
     const { size, move, bar } = this;
     return (
       <div
-        class={["scrollbar__bar", "is-" + bar.key]}
+        class={["wxq-scrollbar__bar", "is-" + bar.key]}
         onMousedown={this.clickTrackHandler}
       >
         <div
           ref="thumb"
-          class="scrollbar__thumb"
+          class="wxq-scrollbar__thumb"
           onMousedown={this.clickThumbHandler}
           style={this.renderThumbStyle({ size, move, bar })}
         />
@@ -143,7 +143,6 @@ export default class Bar extends mixins(BaseComp) {
     style.transform = translate;
     style.msTransform = translate;
     style.webkitTransform = translate;
-
     return style;
   }
   destroyed() {
