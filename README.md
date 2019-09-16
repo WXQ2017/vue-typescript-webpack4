@@ -4,16 +4,16 @@
 
 ## UI 组件使用
 
-| achor | 组件名       | component  |
-| ----- | ------------ | ---------- |
-| 1     | 无占位滚动条 | scroll-bar |
-| 2     | 滚动条       | bar        |
+| achor      | 组件名       | component  |
+| ---------- | ------------ | ---------- |
+| 1[^achor1] | 无占位滚动条 | scroll-bar |
+| 2          | 滚动条       | bar        |
 
 ---
 
 ## Usage
 
-### 1 scroll-bar
+[^achor1]: ### scroll-bar
 
 #### Prop
 

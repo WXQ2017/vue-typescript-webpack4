@@ -5,10 +5,13 @@ import Vue from "vue";
 import Bar from "./scroll-bar/bar.vue";
 import ScrollBar from "./scroll-bar/scroll-bar.vue";
 
-// WXQ-BUILD-COMP-NAME # NOT DELETE
-const components = [ScrollBar, Bar];
+const components = [
+  // WXQ-BUILD-COMP-NAME # NOT DELETE
+  ScrollBar,
+  Bar,
+];
 
 components.forEach((component: any) => {
   const c = new component();
-  Vue.component(c.$options.name, component);
+  Vue.component(c.$options.name || c, component);
 });
