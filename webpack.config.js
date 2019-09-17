@@ -3,15 +3,16 @@ const webpack = require("webpack");
 const OptimizeCSSPlugin = require("optimize-css-assets-webpack-plugin");
 // webpack 4 MiniCssExtractPlugin 代替 ExtractTextPlugin
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+// const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // const CopyWebpackPlugin = require("copy-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const { CheckerPlugin } = require("awesome-typescript-loader");
 
 const fs = require("fs");
-require(path.resolve(__dirname, "config/config.js"));
-const SITE_INFO = config_env;
+const file = path.resolve(__dirname, "config/site.json");
+const SITE_INFO = JSON.parse(fs.readFileSync(file));
 
 // 发布环境
 const RELEASE_ENV = process.env.RELEASE_ENV || "DEV";
@@ -24,43 +25,30 @@ const NODE_ENV = {
 process.env.NODE_ENV = NODE_ENV;
 console.log(NODE_ENV);
 
-const extractLESS = new MiniCssExtractPlugin({
-  filename: "styles/[name]-one-[contenthash].css",
-  allChunks: true,
-});
-const extractSCSS = new MiniCssExtractPlugin(
-  "styles/[name]-two-[contenthash].css",
-);
-const isMaster = process.env.NODE_ENV === "production";
-const isTest = process.env.NODE_ENV === "production";
-const isDev = process.env.NODE_ENV === "development";
-
 const publicPath = "/";
-// global PUBLIC_PATH = "/"
 module.exports = {
-  // mode: process.env.NODE_ENV,
+  mode: process.env.NODE_ENV,
   entry: {
-    app: ["./src/app/index.bootstrap.ts"],
+    // app: ["babel-polyfill", "./src/app/app.ts"],
+    app: "./src/app/index.bootstrap.ts",
   },
   output: {
     filename: "scripts/[name]_[hash].js",
     path: path.resolve(__dirname, "dist"),
     publicPath: publicPath,
   },
+  resolve: {
+    // 配置模块如何解析
+    extensions: [".vue", ".ts", ".tsx", ".js", ".jsx"],
+    alias: {
+      vue:
+        process.env.NODE_ENV !== "production"
+          ? "vue/dist/vue.js"
+          : "vue/dist/vue.min.js",
+    },
+  },
   module: {
     rules: [
-      // {
-      //   test: /\.js$/,
-      //   exclude: path.resolve(__dirname, "/node_modules"),
-      //   // exclude: file => /node_modules/.test(file) && !/\.vue\.js/.test(file),
-      //   use: {
-      //     loader: "babel-loader"
-      //   }
-      // },
-      // {
-      //   test: /\.jsx?$/,
-      //   loader: "babel-loader",
-      // },
       {
         test: /\.tsx?$/,
         use: [
@@ -83,18 +71,15 @@ module.exports = {
           },
         ],
       },
-      // {
-      //   test: /\.css$/,
-      //   use: [
-      //     MiniCssExtractPlugin.loader,
-      //     {
-      //       loader: "css-loader",
-      //       options: {
-      //         minimize: process.env.NODE_ENV === "production"
-      //       }
-      //     }
-      //   ]
-      // },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+          },
+        ],
+      },
       {
         test: /\.scss$/,
         use: [
@@ -106,30 +91,50 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?/,
+        test: /\.(png|jpg|gif)$/,
         use: [
           {
             loader: "url-loader",
-            query: {
-              limit: 10000,
-              name: "img/[name].[hash:7].[ext]",
+            options: {
+              limit: 8192,
+              publicPath: publicPath + "images/",
+              outputPath: "images/",
             },
           },
         ],
       },
       {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: "url-loader",
-        query: {
-          limit: 10000,
-          name: "fonts/[name].[hash:7].[ext]",
-        },
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "[hash].[ext]",
+              publicPath: publicPath + "styles/",
+              outputPath: "styles/",
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(json)$/,
+        type: "javascript/auto",
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "[name].[ext]",
+              publicPath: publicPath + "config/",
+              outputPath: "config/",
+            },
+          },
+        ],
       },
     ],
   },
-  devtool: isMaster ? "" : "inline-source-map",
+  devtool: NODE_ENV === "production" ? "none" : "inline-source-map",
   devServer: {
-    // redirect vue-router history
+    // redirect
     historyApiFallback: {
       rewrites: [
         {
@@ -139,36 +144,19 @@ module.exports = {
       ],
       disableDotRule: true,
     },
+    // host: "192.168.1.199",
     host: "127.0.0.1",
     hot: true,
-    port: 8088,
+    port: 8080,
     publicPath: publicPath,
-    disableHostCheck: true,
+    contentBase: path.resolve(__dirname, "dist"),
+    disableHostCheck: true, // Invalid Host header 服务器域名访问出现的问题
   },
   optimization: {
-    // 已废弃
-    // minimize: isMaster ? true : false, //是否进行代码压缩
-    // minimizer: [
-    //   new TerserPlugin({
-    //     cache: true,
-    //     parallel: true,
-
-    //     sourceMap: true, // Must be set to true if using source-maps in production
-    //     terserOptions: {
-    //       // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
-    //     },
-    //   }),
-    // ],
     splitChunks: {
-      // initial、async、 all。
-      // 默认为async，表示只会提取异步加载模块的公共代码，initial表示只会提取初始入口模块的公共代码，all表示同时提取前两者的代码
-      chunks: "async",
-      // minSize: 30000, //模块大于30k会被抽离到公共模块
-      // minChunks: 1, //模块出现1次就会被抽离到公共模块
-      // maxAsyncRequests: 5, //异步模块，一次最多只能被加载5个
-      // maxInitialRequests: 3, //入口模块最多只能加载3个
       cacheGroups: {
         commons: {
+          test: /[\\/]node_modules[\\/]/,
           name: "commons",
           chunks: "initial",
           minChunks: 2,
@@ -176,16 +164,13 @@ module.exports = {
       },
     },
   },
-  resolve: {
-    // 配置模块如何解析
-    extensions: [".vue", ".ts", ".tsx", ".js", ".jsx", ".json"],
-  },
   plugins: [
     new VueLoaderPlugin(),
+    new CheckerPlugin(),
     new webpack.DefinePlugin({
-      "process.env": process.env.NODE_ENV,
-      SITE_INFO: JSON.stringify(SITE_INFO),
+      // "process.env": { NODE_ENV: '"development"' } ,
       PUBLIC_PATH: JSON.stringify(publicPath),
+      SITE_INFO: JSON.stringify(SITE_INFO),
     }),
     // new webpack.optimize.UglifyJsPlugin({
     //   compress: {
@@ -198,14 +183,16 @@ module.exports = {
     // }),
 
     // 将js中引入的css分离的插件
-    extractLESS,
-    extractSCSS,
+    new MiniCssExtractPlugin({
+      filename: "styles/[name]_[hash].css",
+    }),
     //压缩提取出的css，并解决ExtractTextPlugin分离出的js重复问题(多个文件引入同一css文件)
     new OptimizeCSSPlugin(),
     new HtmlWebpackPlugin({
       filename: "index.html", // 生成的html文件名
       template: "./src/app/index.html", // 依据的模板
-      inject: true, //注入的js文件将会被放在body标签中,当值为'head'时，将被放在head标签中
+      chunks: ["app", "commons"],
+      inject: true,
       minify: {
         //压缩配置
         removeComments: true, //删除html中的注释代码
@@ -213,26 +200,10 @@ module.exports = {
         removeAttributeQuotes: true, //删除html元素中属性的引号
       },
       // chunksSortMode: "dependency" //按dependency的顺序引入
-      chunksSortMode: "none", //如果使用webpack4将该配置项设置为'none'
+      chunksSortMode: "none",
+      SITE_INFO,
     }),
-    // 分离公共js到vendor中
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: "vendor", //文件名
-    //   minChunks: (module, count) => {
-    //     // 声明公共的模块来自node_modules文件夹
-    //     return (
-    //       module.resource && /\.js$/.test(module.resource) && module,
-    //       resource.indexOf(path.join(__dirname, "../node_modules")) === 0
-    //     );
-    //   }
-    // }),
-    // //上面虽然已经分离了第三方库,每次修改编译都会改变vendor的hash值，导致浏览器缓存失效。原因是vendor包含了webpack在打包过程中会产生一些运行时代码，运行时代码中实际上保存了打包后的文件名。当修改业务代码时,业务代码的js文件的hash值必然会改变。一旦改变必然会导致vendor变化。vendor变化会导致其hash值变化。
-    // //下面主要是将运行时代码提取到单独的manifest文件中，防止其影响vendor.js
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: "mainifest",
-    //   chunks: ["vendor"]
-    // }),
-    // 复制静态资源,将static文件内的内容复制到指定文件夹
+
     // new CopyWebpackPlugin([
     //   {
     //     from: path.resolve(__dirname, "../static"),

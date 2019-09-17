@@ -13,5 +13,5 @@ const components = [
 
 components.forEach((component: any) => {
   const c = new component();
-  Vue.component(c.$options.name || c, component);
+  Vue.component(c.$options.name, component);
 });

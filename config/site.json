@@ -1,0 +1,29 @@
+{
+  "DEV": {
+    "remote": "shuwen.test.trial.link:18081",
+    "local": "192.168.1.168:13086",
+    "appID": "xxx",
+    "supPath": "/timesheet-web-api",
+    "protocol": "http:"
+  },
+  "TEST": {
+    "remote": "timesheet.test.trial.link:18081",
+    "local": "172.16.107.229",
+    "appID": "xxx",
+    "supPath": "/timesheet-web-api",
+    "protocol": "http:"
+  },
+  "UAT": {
+    "remote": "timesheet.trial.link",
+    "local": "lbnweb.haveoo.com",
+    "supPath": "/web-api",
+    "protocol": "http:"
+  },
+  "MASTER": {
+    "remote": "timesheet.trial.link",
+    "local": "lbnweb.xylbn.cn",
+    "supPath": "/web-api",
+    "protocol": "https:"
+  },
+  "runtimes": "TEST"
+}
