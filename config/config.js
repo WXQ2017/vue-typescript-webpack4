@@ -1,6 +1,6 @@
 var config_env = {
   DEV: {
-    remote: "shuwen.test.trial.link:18081",
+    remote: "",
     otherRemotes: {},
     local: "180.167.88.250:13089",
     entrance: "/login",
@@ -9,7 +9,7 @@ var config_env = {
     publicPath: "/",
   },
   TEST: {
-    remote: "shuwen.test.trial.link:18081",
+    remote: "",
     otherRemotes: {},
     local: "172.16.107.229",
     entrance: "/login",
@@ -18,17 +18,17 @@ var config_env = {
     publicPath: "/",
   },
   UAT: {
-    remote: "erp.shuwen.uat.trial.link:18080",
+    remote: "",
     otherRemotes: {},
-    local: "shuwen.test.yaoyanshe.com",
+    local: "",
     entrance: "/login",
     protocol: "http:",
     publicPath: "/",
   },
   MASTER: {
-    remote: "erp.shuwen.trial.link",
+    remote: "",
     otherRemotes: {},
-    local: "erp.shuwen.trial.link",
+    local: "",
     entrance: "/login",
     protocol: "https:",
     publicPath: "/",
