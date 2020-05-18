@@ -183,7 +183,6 @@ module.exports = {
   plugins: [
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
-      "process.env": process.env.NODE_ENV,
       SITE_INFO: JSON.stringify(SITE_INFO),
       PUBLIC_PATH: JSON.stringify(publicPath),
     }),
