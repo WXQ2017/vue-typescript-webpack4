@@ -144,6 +144,7 @@ module.exports = {
     port: 8088,
     publicPath: publicPath,
     disableHostCheck: true,
+    contentBase: [path.join(__dirname, "dist")], // 读取静态资源
   },
   optimization: {
     // 已废弃
