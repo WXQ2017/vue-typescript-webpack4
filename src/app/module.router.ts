@@ -2,6 +2,7 @@ import Vue from "vue";
 import { RouteConfig } from "vue-router";
 import VueRouter from "vue-router";
 import * as PageLoading from "./pages/fac.page";
+import Common from "./core/common";
 Vue.use(VueRouter);
 const routes: RouteConfig[] = [
   // WXQ-BUILD-ROUTER-PAGE # NOT DELETE
@@ -22,7 +23,7 @@ const routes: RouteConfig[] = [
 ];
 
 const router = new VueRouter({
-  base: "/",
+  base: Common.getPublicPath(),
   mode: "history",
   routes,
 });

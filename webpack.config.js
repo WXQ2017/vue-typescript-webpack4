@@ -1,9 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const OptimizeCSSPlugin = require("optimize-css-assets-webpack-plugin");
-// webpack 4 MiniCssExtractPlugin 代替 ExtractTextPlugin
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // const CopyWebpackPlugin = require("copy-webpack-plugin")
 const TerserPlugin = require("terser-webpack-plugin");
@@ -35,7 +33,7 @@ const isMaster = process.env.NODE_ENV === "production";
 const isTest = process.env.NODE_ENV === "production";
 const isDev = process.env.NODE_ENV === "development";
 
-const publicPath = "/";
+const PUBLIC_PATH = "/";
 // global PUBLIC_PATH = "/"
 module.exports = {
   // mode: process.env.NODE_ENV,
@@ -45,7 +43,7 @@ module.exports = {
   output: {
     filename: "scripts/[name]_[hash].js",
     path: path.resolve(__dirname, "dist"),
-    publicPath: publicPath,
+    publicPath: PUBLIC_PATH,
   },
   module: {
     rules: [
@@ -112,7 +110,9 @@ module.exports = {
             loader: "url-loader",
             query: {
               limit: 10000,
-              name: "img/[name].[hash:7].[ext]",
+              name: "[name].[hash:7].[ext]",
+              publicPath: PUBLIC_PATH + "img/",
+              outputPath: PUBLIC_PATH,
             },
           },
         ],
@@ -122,7 +122,9 @@ module.exports = {
         loader: "url-loader",
         query: {
           limit: 10000,
-          name: "fonts/[name].[hash:7].[ext]",
+          name: "[name].[hash:7].[ext]",
+          publicPath: PUBLIC_PATH + "fonts/",
+          outputPath: PUBLIC_PATH,
         },
       },
     ],
@@ -142,24 +144,11 @@ module.exports = {
     host: "127.0.0.1",
     hot: true,
     port: 8088,
-    publicPath: publicPath,
+    publicPath: PUBLIC_PATH,
     disableHostCheck: true,
     contentBase: [path.join(__dirname, "dist")], // 读取静态资源
   },
   optimization: {
-    // 已废弃
-    // minimize: isMaster ? true : false, //是否进行代码压缩
-    // minimizer: [
-    //   new TerserPlugin({
-    //     cache: true,
-    //     parallel: true,
-
-    //     sourceMap: true, // Must be set to true if using source-maps in production
-    //     terserOptions: {
-    //       // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
-    //     },
-    //   }),
-    // ],
     splitChunks: {
       // initial、async、 all。
       // 默认为async，表示只会提取异步加载模块的公共代码，initial表示只会提取初始入口模块的公共代码，all表示同时提取前两者的代码
@@ -185,7 +174,7 @@ module.exports = {
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
       SITE_INFO: JSON.stringify(SITE_INFO),
-      PUBLIC_PATH: JSON.stringify(publicPath),
+      PUBLIC_PATH: JSON.stringify(PUBLIC_PATH),
     }),
     // new webpack.optimize.UglifyJsPlugin({
     //   compress: {
@@ -215,30 +204,5 @@ module.exports = {
       // chunksSortMode: "dependency" //按dependency的顺序引入
       chunksSortMode: "none", //如果使用webpack4将该配置项设置为'none'
     }),
-    // 分离公共js到vendor中
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: "vendor", //文件名
-    //   minChunks: (module, count) => {
-    //     // 声明公共的模块来自node_modules文件夹
-    //     return (
-    //       module.resource && /\.js$/.test(module.resource) && module,
-    //       resource.indexOf(path.join(__dirname, "../node_modules")) === 0
-    //     );
-    //   }
-    // }),
-    // //上面虽然已经分离了第三方库,每次修改编译都会改变vendor的hash值，导致浏览器缓存失效。原因是vendor包含了webpack在打包过程中会产生一些运行时代码，运行时代码中实际上保存了打包后的文件名。当修改业务代码时,业务代码的js文件的hash值必然会改变。一旦改变必然会导致vendor变化。vendor变化会导致其hash值变化。
-    // //下面主要是将运行时代码提取到单独的manifest文件中，防止其影响vendor.js
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: "mainifest",
-    //   chunks: ["vendor"]
-    // }),
-    // 复制静态资源,将static文件内的内容复制到指定文件夹
-    // new CopyWebpackPlugin([
-    //   {
-    //     from: path.resolve(__dirname, "../static"),
-    //     to: "/static",
-    //     ignore: [".*"] //忽视.*文件
-    //   }
-    // ])
   ],
 };
