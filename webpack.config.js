@@ -96,35 +96,40 @@ module.exports = {
       {
         test: /\.scss$/,
         use: [
-          process.env.NODE_ENV !== "production"
-            ? "vue-style-loader"
-            : MiniCssExtractPlugin.loader,
+          isDev ? "vue-style-loader" : MiniCssExtractPlugin.loader,
           "css-loader",
-          "sass-loader",
+          "postcss-loader",
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true,
+              sourceMapContents: false,
+            },
+          },
         ],
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?/,
         use: [
           {
-            loader: "url-loader",
+            loader: "file-loader",
             query: {
               limit: 10000,
               name: "[name].[hash:7].[ext]",
-              publicPath: PUBLIC_PATH + "img/",
-              outputPath: PUBLIC_PATH,
+              publicPath: PUBLIC_PATH + "imgs/",
+              outputPath: "imgs/",
             },
           },
         ],
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: "url-loader",
+        loader: "file-loader",
         query: {
           limit: 10000,
           name: "[name].[hash:7].[ext]",
           publicPath: PUBLIC_PATH + "fonts/",
-          outputPath: PUBLIC_PATH,
+          outputPath: "fonts/",
         },
       },
     ],
