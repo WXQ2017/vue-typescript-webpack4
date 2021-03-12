@@ -11,6 +11,13 @@ const fs = require("fs");
 require(path.resolve(__dirname, "config/config.js"));
 const SITE_INFO = config_env;
 
+// const file = path.resolve(__dirname, "config/site.json");
+// const SITE_INFO = JSON.parse(fs.readFileSync(file));
+
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = "development";
+}
+
 // 发布环境
 const RELEASE_ENV = process.env.RELEASE_ENV || "DEV";
 // 打包环境
@@ -21,22 +28,14 @@ const NODE_ENV = {
 }[RELEASE_ENV];
 process.env.NODE_ENV = NODE_ENV;
 console.log(NODE_ENV);
-
-const extractLESS = new MiniCssExtractPlugin({
-  filename: "styles/[name]-one-[contenthash].css",
-  allChunks: true,
-});
-const extractSCSS = new MiniCssExtractPlugin(
-  "styles/[name]-two-[contenthash].css",
-);
 const isMaster = process.env.NODE_ENV === "production";
 const isTest = process.env.NODE_ENV === "production";
 const isDev = process.env.NODE_ENV === "development";
 
 const PUBLIC_PATH = "/";
 // global PUBLIC_PATH = "/"
-module.exports = {
-  // mode: process.env.NODE_ENV,
+const webpackConfig = {
+  mode: process.env.NODE_ENV,
   entry: {
     app: ["./src/app/index.bootstrap.ts"],
   },
@@ -59,6 +58,11 @@ module.exports = {
       //   test: /\.jsx?$/,
       //   loader: "babel-loader",
       // },
+      {
+        test: /\.js$/,
+        loader: "babel-loader",
+        include: [path.resolve("src")],
+      },
       {
         test: /\.tsx?$/,
         use: [
@@ -94,7 +98,7 @@ module.exports = {
       //   ]
       // },
       {
-        test: /\.scss$/,
+        test: /\.(scss|css)$/,
         use: [
           isDev ? "vue-style-loader" : MiniCssExtractPlugin.loader,
           "css-loader",
@@ -102,8 +106,8 @@ module.exports = {
           {
             loader: "sass-loader",
             options: {
-              sourceMap: true,
-              sourceMapContents: false,
+              // sourceMap: true,
+              // sourceMapContents: false,
             },
           },
         ],
@@ -148,7 +152,7 @@ module.exports = {
     },
     host: "127.0.0.1",
     hot: true,
-    port: 8088,
+    port: 8089,
     publicPath: PUBLIC_PATH,
     disableHostCheck: true,
     contentBase: [path.join(__dirname, "dist")], // 读取静态资源
@@ -174,6 +178,12 @@ module.exports = {
   resolve: {
     // 配置模块如何解析
     extensions: [".vue", ".ts", ".tsx", ".js", ".jsx", ".json"],
+    alias: {
+      vue:
+        process.env.NODE_ENV !== "production"
+          ? "vue/dist/vue.js"
+          : path.resolve(process.cwd(), "node_modules", "vue/dist/vue.min.js"),
+    },
   },
   plugins: [
     new VueLoaderPlugin(),
@@ -181,33 +191,54 @@ module.exports = {
       SITE_INFO: JSON.stringify(SITE_INFO),
       PUBLIC_PATH: JSON.stringify(PUBLIC_PATH),
     }),
-    // new webpack.optimize.UglifyJsPlugin({
-    //   compress: {
-    //     // 压缩配置
-    //     warnings: false,
-    //     drop_console: false,
-    //     drop_debugger: false
-    //   },
-    //   sourceMap: true
-    // }),
-
-    // 将js中引入的css分离的插件
-    extractLESS,
-    extractSCSS,
     //压缩提取出的css，并解决ExtractTextPlugin分离出的js重复问题(多个文件引入同一css文件)
-    new OptimizeCSSPlugin(),
+    new OptimizeCSSPlugin({
+      assetNameRegExp: /\.css$/g, // default
+      cssProcessor: require("cssnano"), // default
+      cssProcessorPluginOptions: {
+        preset: ["default", { discardComments: { removeAll: true } }],
+      },
+      canPrint: true,
+    }),
+    // 将js中引入的css分离的插件
+    new MiniCssExtractPlugin({
+      filename: "styles/[name]_[hash].css",
+    }),
+    new webpack.EnvironmentPlugin(["NODE_ENV"]),
     new HtmlWebpackPlugin({
       filename: "index.html", // 生成的html文件名
       template: "./src/app/index.html", // 依据的模板
       inject: true, //注入的js文件将会被放在body标签中,当值为'head'时，将被放在head标签中
       minify: {
-        //压缩配置
-        removeComments: true, //删除html中的注释代码
-        collapseWhitespace: true, //删除html中的空白符
-        removeAttributeQuotes: true, //删除html元素中属性的引号
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true,
       },
       // chunksSortMode: "dependency" //按dependency的顺序引入
-      chunksSortMode: "none", //如果使用webpack4将该配置项设置为'none'
+      chunksSortMode: "none",
     }),
   ],
+};
+
+module.exports = (env, argv) => {
+  if (process.env.NODE_ENV === "production") {
+    webpackConfig.optimization.minimize = true;
+    webpackConfig.optimization.minimizer = [
+      new TerserPlugin({
+        terserOptions: {
+          ecma: undefined,
+          warnings: false,
+          parse: {},
+          compress: {
+            drop_console: true,
+            drop_debugger: false,
+            pure_funcs: ["console.log"],
+          },
+          parallel: 2,
+        },
+      }),
+    ];
+  }
+
+  return webpackConfig;
 };

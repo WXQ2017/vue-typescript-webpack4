@@ -2,7 +2,7 @@ var config_env = {
   DEV: {
     remote: "",
     otherRemotes: {},
-    local: "180.167.88.250:13089",
+    local: "",
     entrance: "/login",
     appID: "xxx",
     protocol: "http:",
@@ -11,7 +11,7 @@ var config_env = {
   TEST: {
     remote: "",
     otherRemotes: {},
-    local: "172.16.107.229",
+    local: "",
     entrance: "/login",
     appID: "xxx",
     protocol: "http:",
